@@ -93,7 +93,7 @@ namespace MueLu {
         for (ParameterList::ConstIterator it2 = levelList.begin(); it2 != levelList.end(); it2++) {
           const std::string& name = it2->first;
           TEUCHOS_TEST_FOR_EXCEPTION(name != "A" && name != "P" && name != "R" && name != "K"  && name != "M" && name != "Mdiag" &&
-                                     name != "Nullspace" && name != "Coordinates" && name != "pcoarsen: element to node map" &&
+                                     name != "Nullspace" && name != "Coordinates" && name != "Material Coordinates" && name != "pcoarsen: element to node map" &&
                                      !IsParamMuemexVariable(name), Exceptions::InvalidArgument,
                                      "MueLu::Utils::AddNonSerializableDataToHierarchy: parameter list contains unknown data type");
 
@@ -107,7 +107,7 @@ namespace MueLu {
             level->AddKeepFlag(name,NoFactory::get(),MueLu::UserData);
             level->Set(name, Teuchos::getValue<RCP<Matrix > >     (it2->second), NoFactory::get());
           }
-          else if (name == "Mdiag")
+          else if (name == "Mdiag" || name == "Material Coordinates")
           {
             level->AddKeepFlag(name,NoFactory::get(),MueLu::UserData);
             level->Set(name, Teuchos::getValue<RCP<Vector > >     (it2->second), NoFactory::get());
@@ -179,13 +179,13 @@ namespace MueLu {
         for (ParameterList::ConstIterator it2 = userList.begin(); it2 != userList.end(); it2++) {
           const std::string& name = it2->first;
           TEUCHOS_TEST_FOR_EXCEPTION(name != "P" && name != "R"  && name != "K"  && name != "M" && name != "Mdiag" &&
-                                     name != "Nullspace" && name != "Coordinates" &&
+                                     name != "Nullspace" && name != "Coordinates" && name != "Material Coordinates" &&
                                      !IsParamValidVariable(name), Exceptions::InvalidArgument,
                                      "MueLu::Utils::AddNonSerializableDataToHierarchy: user data parameter list contains unknown data type!");
           if( name == "P" || name == "R" || name == "K" || name == "M") {
             level->AddKeepFlag(name,NoFactory::get(),MueLu::UserData);
             level->Set(name, Teuchos::getValue<RCP<Matrix > >     (it2->second), NoFactory::get());
-          } else if (name == "Mdiag") {
+          } else if (name == "Mdiag" || name == "Material Coordinates") {
             level->AddKeepFlag(name,NoFactory::get(),MueLu::UserData);
             level->Set(name, Teuchos::getValue<RCP<Vector > >(it2->second), NoFactory::get());
           } else if (name == "Nullspace") {
