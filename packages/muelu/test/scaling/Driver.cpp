@@ -468,8 +468,6 @@ int main_(Teuchos::CommandLineProcessor &clp, Xpetra::UnderlyingLib& lib, int ar
       bool useML = mueluList.isParameter("use external multigrid package") && (mueluList.get<std::string>("use external multigrid package") == "ml");
       if(useML && lib != Xpetra::UseEpetra) throw std::runtime_error("Error: Cannot use ML on non-epetra matrices");
 
-      if(!material.is_null()) mueluList.set("Material Coordinates",material);
-
       RCP<Hierarchy> H;
       //      RCP<MueLu::TpetraOperator<SC,LO,GO,NO> > AMGXprec;
       RCP<Operator> Prec;
@@ -502,7 +500,9 @@ int main_(Teuchos::CommandLineProcessor &clp, Xpetra::UnderlyingLib& lib, int ar
           userParamList.set<RCP<RealValuedMultiVector> >("Coordinates", coordinates);
           userParamList.set<RCP<Xpetra::MultiVector<SC,LO,GO,NO>> >("Nullspace", nullspace);
           userParamList.set<Teuchos::Array<LO> >("Array<LO> lNodesPerDim", lNodesPerDim);
-          H = MueLu::CreateXpetraPreconditioner(A, mueluList, mueluList);
+          if(!material.is_null()) mueluList.sublist("user data").set("Material Coordinates",material);
+          H = MueLu::CreateXpetraPreconditioner(A, mueluList, nullspace);
+
         }
       }
 #ifdef HAVE_MUELU_CUDA
